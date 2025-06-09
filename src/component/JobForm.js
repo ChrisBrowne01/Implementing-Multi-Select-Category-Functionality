@@ -1,22 +1,16 @@
 import React, { useState } from 'react';
 import { FormButton } from './FormButton';
-import { FilterForm } from './FilterForm'; // Corrected import to FilterForm
-import './AppForm.css'; // Assuming AppForm.css exists and is for form styles
-import './FormButton.css'; // For the tag buttons
+import { FilterForm } from './FilterForm';
+import './AppForm.css';
+import './FormButton.css'; // Make sure this CSS file exists for tag styling
 
 export const JobForm = ({ addNewJob, newJob, setNewJob, search, setSearch, error, setError }) => {
   const [successMessage, setSuccessMessage] = useState('');
-  const [activityFormData, setActivityFormData] = useState({
-      activity: "",
-      status: "InProgress",
-      category: []
-    });
-  // Define consistent categories and statuses
-  const categories = ['Read Emails', 'Web Parsing', 'Send Emails'];
-  // Ensure this matches statuses used in App.js and JobStatus.js
-  const statuses = ['To Start', 'In Progress', 'Completed'];
 
-  // Change handler for input fields (title, status, and the new category select)
+  const categories = ['Read Emails', 'Web Parsing', 'Send Emails', 'Data Entry', 'Reporting', 'Automated Testing']; 
+  const statuses = ['To Start', 'In Progress', 'Completed']; 
+
+  // handleInputChange remains largely the same for title and status
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setNewJob(prevJob => ({ ...prevJob, [name]: value }));
@@ -24,50 +18,57 @@ export const JobForm = ({ addNewJob, newJob, setNewJob, search, setSearch, error
     // Clear specific error messages when input changes and meets basic criteria
     if (name === 'title' && value.trim().length >= 3) {
       setError(prevError => (prevError === 'Job title is required.' || prevError === 'Job title must be at least 3 characters long.') ? '' : prevError);
-    } else if (name === 'category' && value !== '') {
-      setError(prevError => prevError === 'Please select a category.' ? '' : prevError);
     } else if (name === 'status' && value !== '') {
-        setError(prevError => prevError === 'Please select a status.' ? '' : prevError);
+      setError(prevError => prevError === 'Please select a status.' ? '' : prevError);
     }
   };
 
-  // Handles clicking the category buttons (category)
- /*  const handleCategoryClick = (value) => { // Removed event object, directly use value
-    setNewJob(prevJob => ({ ...prevJob, category: value }));
-    // Clear error message if user selects a category after an error
-    setError(prevError => prevError === 'Please select a category.' ? '' : prevError);
-  }; */
-  const selectCategory = (cat) => {
-    if (activityFormData.category.some(item => item === cat)) {
-      const filterCategory = activityFormData.category.filter(item => item !== cat)
-      setActivityFormData(prev => {
-        return{...prev, category:filterCategory}
-      })
-    } else {
-      setActivityFormData(prev => {
-        return{...prev, category:[...prev.category, cat]}
-      })   
-    }
-  }
-  console.log(activityFormData.category);
+  // 1. Implement the handleCategoryToggle function
+  const handleCategoryToggle = (categoryValue) => {
+    setNewJob(prevJob => {
+      const currentCategories = prevJob.category || [];
 
+      if (currentCategories.includes(categoryValue)) {
+        // If selected, remove it
+        const updatedCategories = currentCategories.filter(cat => cat !== categoryValue);
+        setError(prevError => prevError === 'Please select at least one category.' ? '' : prevError); 
+        return { ...prevJob, category: updatedCategories };
+      } else {
+        // If not selected, add it
+        // Bonus Challenge 1: Implement max limit (example: max 3 categories)
+        if (currentCategories.length >= 3) { 
+          setError('Maximum of 3 categories can be selected.');
+          return prevJob; 
+        }
+        const updatedCategories = [...currentCategories, categoryValue];
+        setError(prevError => prevError === 'Please select at least one category.' ? '' : prevError); 
+        return { ...prevJob, category: updatedCategories };
+      }
+    });
+  };
+
+  // 6. Add a "Clear Categories" button
+  const handleClearCategories = () => {
+    setNewJob(prevJob => ({ ...prevJob, category: [] }));
+    setError(""); 
+  };
 
   // Reset the form fields to their initial empty/default state
   const resetForm = () => {
     setNewJob({
       title: '',
-      category: '',
+      category: [], 
       status: 'To Start'
     });
-    setError(""); // Clear any form-wide error messages
-    setSuccessMessage(''); // Also clear success message
+    setError("");
+    setSuccessMessage('');
   };
 
   // Handle on Submit function
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Validation logic (more specific error messages)
+    // Validation logic for multi-select
     if (!newJob.title.trim()) {
       setError('Job title is required.');
       return;
@@ -76,44 +77,40 @@ export const JobForm = ({ addNewJob, newJob, setNewJob, search, setSearch, error
       setError('Job title must be at least 3 characters long.');
       return;
     }
-    if (!newJob.category || newJob.category === '') {
-      setError('Please select a category.');
+    // 5. Implement form validation: Ensure at least one category is selected
+    if (newJob.category.length === 0) {
+      setError('Please select at least one category.');
       return;
     }
-    if (!newJob.status || newJob.status === '') { // Check against empty string now that 'Select status...' is removed as a value
-        setError('Please select a status.');
-        return;
+    if (!newJob.status || newJob.status === '') {
+      setError('Please select a status.');
+      return;
     }
 
-    // If validation passes:
-    console.log('Job Details Submitted:', newJob);
+    console.log('Job Details Submitted:', newJob); // 4. Modify handleSubmit to include selected categories
 
-    addNewJob(newJob);
+    addNewJob(newJob); 
 
-    // Add visual feedback when a job is successfully added
     setSuccessMessage('Job successfully added!');
     resetForm(); 
 
-    // Clear success message after 5 seconds
     setTimeout(() => {
       setSuccessMessage('');
     }, 5000);
   };
 
   // Determine if the submit button should be disabled
-  /* const isSubmitDisabled =
+  const isSubmitDisabled =
     !newJob.title.trim() ||
     newJob.title.trim().length < 3 ||
-    !newJob.category ||
-    newJob.category === '' ||
+    newJob.category.length === 0 || 
     !newJob.status ||
-    newJob.status === ''; */
+    newJob.status === '';
 
   return (
     <div className="form-header">
       <form onSubmit={handleSubmit}>
         <div>
-          {/* An input field for entering job titles */}
           <input
             type="text"
             name="title"
@@ -128,33 +125,53 @@ export const JobForm = ({ addNewJob, newJob, setNewJob, search, setSearch, error
           )}
         </div>
 
-        {/* Buttons for selecting job categories */}
         <div className="form-details">
-          <div className="bottom-line">
+          <label>Select Categories:</label>
+          <div className="bottom-line category-buttons">
             {categories.map(category => (
               <FormButton
                 key={category}
                 value={category}
-                selectCategory={selectCategory} // Pass function that calls with value
-                isSelected={newJob.category === category}
+                handleCategoryClick={handleCategoryToggle}
+                // 2. Add visual feedback for selected categories
+                isSelected={newJob.category.includes(category)}
               />
             ))}
-            {/* Removed the duplicate category select as per previous recommendation */}
           </div>
-          {error === 'Please select a category.' && (
+          {error === 'Please select at least one category.' && (
             <p className="error-message">{error}</p>
+          )}
+          {error === 'Maximum of 3 categories can be selected.' && ( // Error for max limit
+            <p className="error-message">{error}</p>
+          )}
+
+          {/* 3. Display the list of selected categories */}
+          {newJob.category.length > 0 && (
+            <div className="selected-categories-display">
+              <strong>Selected:</strong> {newJob.category.join(', ')}
+            </div>
+          )}
+
+          {/* Clear Categories Button */}
+          {newJob.category.length > 0 && (
+            <button
+              type="button" // Important: type="button" to prevent form submission
+              onClick={handleClearCategories}
+              className="clear-categories-button"
+            >
+              Clear Categories
+            </button>
           )}
         </div>
 
         <div>
-          {/* A dropdown menu for selecting job status */}
           <select
             className={`job-status ${error === 'Please select a status.' ? 'input-error' : ''}`}
             name="status"
             value={newJob.status}
             onChange={handleInputChange}
           >
-            <option value="">Select status...</option> {/* Default empty option */}
+            <option value="">Select status...</option>
             {statuses.map(status => (
               <option key={status} value={status}>{status}</option>
             ))}
@@ -164,17 +181,14 @@ export const JobForm = ({ addNewJob, newJob, setNewJob, search, setSearch, error
           )}
         </div>
 
-        {/* A submit button to add the job */}
-        <button type="submit" className="submit-data" /* disabled={isSubmitDisabled} */>
+        <button type="submit" className="submit-data" disabled={isSubmitDisabled}>
           Add Jobs
         </button>
 
-        {/* Display success message */}
         {successMessage && (<p className="success-message">{successMessage}</p>)}
 
       </form>
 
-      {/* FilterForm is now correctly imported and used separately */}
       <FilterForm
         search={search}
         setSearch={setSearch}

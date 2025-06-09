@@ -1,8 +1,8 @@
 import React from 'react';
-import './FormButton.css'; // Your button specific styles (ensure this exists and has .tag and .selected-tag)
+import './FormButton.css'; 
 
-export const FormButton = ({ value, selectCategory, isSelected }) => {
+export const FormButton = ({ value, handleCategoryClick, isSelected }) => {
   return (
-    <button type="button" onClick={() => selectCategory(value)} value={value} name="category" className={`tag ${isSelected ? 'selected-tag' : ''}`}>{value}</button>
+    <button type="button" onClick={() => handleCategoryClick(value)} value={value} name="category" className={`tag ${isSelected ? 'selected-tag' : ''}`}>{value}</button>
   );
 };

@@ -16,13 +16,22 @@ function App() {
   const [jobs, setJobs] = useState(() => {
     const savedJobs = localStorage.getItem('jobs');
     if (savedJobs) {
-      return JSON.parse(savedJobs);
-    }
+      try{
+        const parsedJobs = JSON.parse(savedJobs);
+        return parsedJobs.map(job => ({
+          ...job,
+          category: Array.isArray(job.category) ? job.category : (job.category ? [job.category] : [])
+        }));
+      } catch (e) {
+        // Handle parsing errors (e.g., corrupted localStorage data)
+        console.error("Error parsing saved jobs from localStorage:", e);
+        return []; // Return an empty array or default jobs if parsing fails
+      }}
     // Default jobs if no saved jobs
     return [
-      { id: 1, title: 'Parse Emails', status: 'To Start', category: 'Read Emails' },
-      { id: 2, title: 'SAP Extraction', status: 'In Progress', category: 'Web Parsing' },
-      { id: 3, title: 'Generate Report', status: 'Completed', category: 'Send Emails' }
+      { id: 1, title: 'Parse Emails', status: 'To Start', category: ['Read Emails'] },
+      { id: 2, title: 'SAP Extraction', status: 'In Progress', category: ['Web Parsing'] },
+      { id: 3, title: 'Generate Report', status: 'Completed', category: ['Send Emails'] }
     ];
   });
 
@@ -92,7 +101,14 @@ function App() {
         setError("Please fill all fields correctly.");
         return;
     }
-    
+    if (jobDetails.category.length === 0) { // Check if the array is empty
+        setError("Please select at least one job category.");
+        return;
+    }
+    if (!jobDetails.status || jobDetails.status === 'Select status...') {
+        setError("Please select a job status.");
+        return;
+    }
 
     // Generate unique ID
     const maxId = jobs.length > 0 ? Math.max(...jobs.map(job => job.id)) : 0;
@@ -106,10 +122,8 @@ function App() {
     };
 
     setJobs(prevJobs => [...prevJobs, newJobListing]);
-
-    // Reset the newJob state in App.js. JobForm will pick this up via props.
-    setNewJob({ title: '', category: '', status: 'To Start' });
-    setError(""); // Clear any form-wide error after successful addition
+    setNewJob({ title: '', category: [], status: 'To Start' });
+    setError("");
 
     console.log("Submitting Job:", newJobListing);
     console.log("All Jobs:", [...jobs, newJobListing]);
@@ -117,11 +131,11 @@ function App() {
 
   // Edit Functions
   // Start editing a job
-  const onEditJob = (jobId) => { // Takes jobId as argument
+  const onEditJob = (jobId) => {
     const jobToEdit = jobs.find(job => job.id === jobId);
     if (jobToEdit) {
       setEditingJob(jobId);
-      setEditForm({ ...jobToEdit });
+      setEditForm({ ...jobToEdit, category: jobToEdit.category || [] });
       setError(""); 
     }
   };
@@ -144,8 +158,9 @@ function App() {
       setError("Job Title must be at least 3 characters.");
       return;
     }
-    if (!editForm.category || editForm.category === '') {
-      setError("Please select a category for the edited job.");
+    // Validation for multi-select category in edit form
+    if (editForm.category.length === 0) {
+      setError("Please select at least one category for the edited job.");
       return;
     }
     if (!editForm.status || editForm.status === '') {
@@ -183,7 +198,16 @@ function App() {
       return;
     }
 
-    // Create a new array of jobs to avoid direct mutation
+    const newJobs = jobs.map(job => {
+      if (job.id === draggedJob.id) {
+        return { ...job, status: destination.droppableId };
+      }
+      return job;
+    });
+
+    setJobs(newJobs);
+
+/*     // Create a new array of jobs to avoid direct mutation
     const newJobs = Array.from(jobs);
 
     // Remove the dragged job from its original position
@@ -198,7 +222,7 @@ function App() {
     // let insertIndex = destination.index;
 
     const finalJobs = [...newJobs, updatedDraggedJob];
-    setJobs(finalJobs);
+    setJobs(finalJobs); */
   };
 
   return (

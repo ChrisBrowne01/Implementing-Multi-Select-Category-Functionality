@@ -59,7 +59,7 @@ body.dark-mode {
 }
 
 .ticket-item {
-  display: flex;
+  /* display: flex; */
     justify-content: space-between;
     align-items: stretch;
 }
