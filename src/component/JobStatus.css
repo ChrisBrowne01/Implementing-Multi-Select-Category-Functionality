@@ -1,0 +1,214 @@
+/* Style for the JobItem */
+
+.job-item {
+  width: 100%;
+  max-width: 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  padding: 10px;
+  box-shadow: 0px 0px 5px 2px rgba(204, 204, 204, 1);
+  transition: box-shadow, transform 0.5s ease;
+}
+
+.job-item:hover {
+  box-shadow: 0px 0px 5px 5px rgba(204, 204, 204, 1);
+  transform: scale(0.95);
+}
+
+.job-item-body {
+  align-content: space-around;
+}
+
+.job-item h5 {
+  margin: 10px 0;
+}
+
+.job-item-description {
+  margin-bottom: 10px;
+  font-size: 12px;
+}
+
+.job-item-price {
+  font-weight: bold;
+  font-size: 13px;
+}
+
+.job-item-detail {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: bold;
+  font-size: 13px;
+}
+
+@media (max-width: 767.98px) {
+  .job-item-detail {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .job-item {
+    max-width: 100%;
+  }
+}
+
+/* Style the status differently based on its value  */
+.status-running {
+  border: 2px solid lightsalmon;
+  color: lightsalmon;
+}
+
+.status-completed {
+  border: 2px solid lightgreen;
+  color: green;
+}
+
+/* Style for the to-start status  */
+.status-to-start {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+  border-radius: 5px;
+  padding: 10px;
+  margin: auto;
+  text-align: center;
+  width: 100%;
+}
+
+/* Style for the in-progress status  */
+.status-in-progress {
+  background-color: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeeba;
+  border-radius: 5px;
+  padding: 10px;
+  margin: auto;
+  text-align: center;
+  width: 100%;
+}
+
+/* Style for the completed status  */
+.status-completed {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+  border-radius: 5px;
+  padding: 10px;
+  margin: auto;
+  text-align: center;
+  width: 100%;
+}
+
+.ticket-info {
+  box-shadow: 0px 0px 5px 2px rgba(204, 204, 204, 1);
+  transition: box-shadow, transform 0.5s ease;
+}
+
+.ticket-info:hover {
+  box-shadow: 0px 0px 5px 5px rgba(204, 204, 204, 1);
+  transform: scale(0.95);
+}
+
+.status-board {
+  display: flex;
+  flex-direction: column;
+  font-family: Arial;
+  margin-block: 10px;
+  gap: 10px;
+}
+
+.card-category {
+  font-size: 14px;
+  line-height: 1.5;
+  padding: 2px 5px;
+  margin: 10px auto;
+  max-width: 110px;
+  border-radius: 25px;
+}
+
+.card-footer {
+  min-width: 50%;
+}
+
+.button-group {
+  display: flex;
+  justify-content: space-between;
+}
+
+.job-action-button {
+  background-color: var(--submit-bg-light); 
+  color: white; 
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: bold;
+  transition: background-color 0.2s ease, width 0.2s ease, min-width 0.2s ease, box-shadow 0.2s ease, color 0.2s ease;
+  min-width: 100px; 
+}
+
+body.dark-mode .job-action-button {
+  background-color: var(--submit-bg-light); 
+  color: var(--text-color-light); 
+}
+
+.status-completed .job-action-button {
+  background-color: var(--section-bg-light); 
+}
+.job-action-button:hover {
+  background-color: var(--submit-hover-bg-light);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+body.dark-mode .job-action-button:hover {
+  background-color: var(--submit-hover-bg-light);
+  box-shadow: 0 2px 7px rgba(255, 255, 255, 0.1);
+}
+
+/* Delete job styling */
+
+.jobEdit, .jobDelete {
+  width: 30px;
+  height: 30px;
+  border-radius: 95%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+.editImg {
+  width: 20px;
+  vertical-align: -webkit-baseline-middle;
+  transition: all 0.3s ease-in-out;
+}
+
+.deletingImg {
+  width: 20px;
+  opacity: 40%;
+  transition: all 0.3s ease-in-out;
+}
+
+@media (max-width: 1200px) {
+  .job-action-button {
+    width: 100px;
+  }  
+}
+
+/* Optional: Even smaller for very small phones */
+@media (max-width: 480px), (min-width: 768px) and (max-width: 1000px) {
+  .ticket-item {
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+  }
+  .card-body {
+    padding-bottom: 10px;
+  }
+}

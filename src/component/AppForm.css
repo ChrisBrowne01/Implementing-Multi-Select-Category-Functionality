@@ -1,0 +1,252 @@
+:root {
+  /* Form-specific colors */
+  --form-bg-light: #f9f9f9;
+  --form-border-light: #ddd;
+  --input-border-light: #ccc;
+  --tag-bg-light: #e2e6ea;
+  --tag-text-light: #343a40;
+  --tag-border-light: #dae0e5;
+  --selected-tag-bg-light: #f4ab53;
+  --selected-tag-border-light: rgba(255, 183, 0, 0.8);
+  --submit-bg-light: #fa9c2a;
+  --submit-hover-bg-light: #ff8d03;
+  --error-text-light: red;
+
+  /* Re-defining primary/secondary if not in App.css, or ensure App.css is imported first */
+  --primary-color: #ae00ff; /* Focus purple */
+  --secondary-color: #fa9c2a; /* Submit orange */
+  --secondary-hover-color: #ff8d03; /* Submit hover orange */
+
+  /* Spacing & Sizes */
+  --spacing-xs: 5px;
+  --spacing-sm: 8px;
+  --spacing-md: 10px;
+  --spacing-lg: 15px;
+  --spacing-xl: 20px;
+  --spacing-xxl: 30px;
+
+  /* Border Radius */
+  --border-radius-sm: 5px;
+  --border-radius-md: 8px;
+  --border-radius-lg: 20px; /* For tags */
+
+  /* Font Sizes */
+  --font-size-sm: 0.9rem;
+  --font-size-md: 1rem;
+}
+
+/* Dark Mode Variables for Form */
+body.dark-mode {
+  --form-bg-light: #2c2c2c; /* Darker background for form */
+  --form-border-light: #444; /* Darker border */
+  --input-border-light: #666; /* Lighter border for contrast */
+  --tag-bg-light: #4a4a4a; /* Darker background for tags */
+  --tag-text-light: #f4f7f6; /* Lighter text for tags */
+  --tag-border-light: #666; /* Lighter border for tags */
+  --selected-tag-bg-light: #d37e2a; /* Slightly darker selected tag */
+  --selected-tag-border-light: rgba(255, 183, 0, 0.5); /* Muted selected border */
+  --submit-bg-light: #d37e2a; /* Darker orange for submit */
+  --submit-hover-bg-light: #c26f1f; /* Even darker orange for hover */
+  --error-text-light: #ff7777; /* Lighter red for dark mode errors */
+}
+
+
+
+/* Add styles for the form container */
+.form-header form { 
+  display: grid; 
+  /* Define grid areas for a clear layout */
+  grid-template-areas: 
+    "title categories"
+    "status submit"
+    "error error";
+  grid-template-columns: 1fr 1fr;
+  align-items: baseline; 
+  gap: var(--spacing-lg), var(--spacing-xl); 
+  background-color: var(--form-bg-light); 
+  padding: var(--spacing-xxl); 
+  margin: var(--spacing-xl) auto;
+  border-radius: var(--border-radius-md); 
+  border: 1px solid var(--form-border-light);
+  max-width: 900px;
+  transition: background-color 0.3s ease, border-color 0.3s ease; 
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+}
+
+body.dark-mode .form-header form {
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4); 
+}
+
+/* Add styles for the input field */
+.bot-input {
+  grid-area: title; 
+  font-size: var(--font-size-md); 
+  font-weight: 400;
+  border-radius: var(--border-radius-sm); 
+  margin-block: var(--spacing-xs) var(--spacing-lg); 
+  width: 100%;
+  padding: var(--spacing-md) var(--spacing-lg);
+  transition: all 0.5s ease;
+  border: 1px solid var(--input-border-light); 
+  background-color: white;
+  color: var(--text-color-light); 
+  box-sizing: border-box; 
+}
+
+body.dark-mode .bot-input, body.dark-mode .filter-input input {
+  background-color: #3a3a3a; 
+  color: var(--text-color-light); 
+  border-color: var(--input-border-light);
+}
+
+.bot-input:focus {
+  outline: none;
+  border-color: var(--primary-color); 
+  box-shadow: 0 0 5px rgba(174, 0, 255, 0.5);
+}
+
+.input-error {
+    border: 2px solid red;
+    outline: 2px solid #a40f0f;
+    box-shadow: 0 0 3px 3px #ff00005e;
+}
+
+/* Add styles for the form details section */
+.form-details {
+  grid-area: categories;
+}
+
+/* Add styles for the category buttons container */
+.bottom-line {
+  display: flex; 
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+}
+
+/* Add styles for the job status dropdown */
+.job-status {
+  grid-area: status;
+  padding: var(--spacing-md);
+  margin: var(--spacing-xs) var(--spacing-lg) var(--spacing-xs) 0; 
+  border: 1px solid var(--input-border-light); 
+  border-radius: var(--border-radius-sm); 
+  font-size: var(--font-size-md); 
+  background-color: white;
+  color: var(--text-color-light); 
+  cursor: pointer;
+  min-width: 150px;
+  width: 100%;
+  box-sizing: border-box; 
+}
+
+body.dark-mode .job-status {
+  background-color: #3a3a3a;
+  color: var(--text-color-light);
+  border-color: var(--input-border-light); 
+}
+
+.job-status:focus-visible {
+  outline: solid 1px var(--primary-color); 
+  border-color: var(--primary-color); 
+  box-shadow: 0 0 2px rgba(174, 0, 255, 0.5);
+}
+
+/* Add styles for the submit button */
+.submit-data {
+  grid-area: submit;
+  background-color: var(--submit-bg-light); 
+  color: white;
+  padding: var(--spacing-md) var(--spacing-xl); 
+  margin: var(--spacing-xs) var(--spacing-xl) var(--spacing-xs) var(--spacing-lg); 
+  border: none;
+  border-radius: var(--border-radius-sm); 
+  cursor: pointer;
+  font-size: var(--font-size-md);
+  transition: all 0.2s ease;
+  width: 50%; 
+  min-width: 120px;
+  box-sizing: border-box;
+}
+
+body.dark-mode .submit-data {
+  background-color: var(--submit-bg-light);
+  color: var(--text-color-light); 
+}
+
+.submit-data:hover {
+  background-color: var(--submit-hover-bg-light); 
+  box-shadow: 0 0 2px rgba(250, 156, 42, 0.5);
+}
+
+.error-message {
+  grid-area: error;
+  margin-top: var(--spacing-xs); 
+  line-height: 1.2;
+  text-align: center;
+  font-size: var(--font-size-sm); 
+  font-weight: 500;
+  color: var(--error-text-light); 
+  width: 100%;
+}
+
+form.filter-input {
+  display: flex;
+  align-items: center;
+  justify-self: center;
+  width: -webkit-fill-available;
+  padding: var(--spacing-md);
+}
+
+form.filter-input input {
+  font-size: 14px;
+  line-height: 1.5;
+  font-size: var(--font-size-md); 
+  font-weight: 400;
+  padding: var(--spacing-md) var(--spacing-xl);
+  margin-block: var(--spacing-xs); 
+  width: 100%;
+  /* padding: var(--spacing-md) var(--spacing-lg); */
+  border-radius: var(--border-radius-sm); 
+  border: 1px solid var(--input-border-light); 
+  background-color: white;
+  color: var(--text-color-light); 
+  box-sizing: border-box; 
+  transition: all 0.5s ease;
+}
+
+/* Responsive Design using Media Queries */
+
+/* For smaller screens (e.g., mobile phones) */
+@media (max-width: 768px) {
+  .form-header form {
+    /* Stack elements vertically on small screens */
+    grid-template-areas: "title" "categories" "status" "submit" "error";
+    grid-template-columns: 1fr;
+    padding: var(--spacing-lg);
+    margin: var(--spacing-xl) var(--spacing-md); 
+    gap: var(--spacing-md); 
+  }
+
+  .bot-input, .job-status,
+  .submit-data, .error-message, .form-details { 
+    width: 100%;
+    margin: 0;
+  }
+
+
+  .bottom-line {
+    justify-content: center; 
+    gap: var(--spacing-md); 
+    margin-bottom: var(--spacing-md); 
+  }
+}
+
+/* For even smaller screens (e.g., very small phones) */
+@media (max-width: 480px) {
+  .form-header form {
+    margin: var(--spacing-lg) var(--spacing-sm);
+    padding: var(--spacing-md);
+  }
+}
