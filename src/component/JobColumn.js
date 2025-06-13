@@ -10,25 +10,25 @@ export const JobColumn = ({
   title,
   image,
   alt,
-  statusName,
+  status,
   search,
   updateJobStatus,
   onDeleteJob,
-  onEditJob, 
+  onEditJob,
   droppableId,
-  editingJob, 
-  editForm, 
-  handleEditFormChange, 
-  saveEdit, 
-  cancelEdit, 
-  formError 
+  editingJob,
+  editForm,
+  handleEditFormChange,
+  saveEdit,
+  cancelEdit,
+  formError
 }) => {
 
   // Filter jobs: first filter by status, then by search query
-  const filteredByStatus = jobs.filter(job => job.status === statusName);
+  const filteredByStatus = jobs.filter(job => job.status === status);
   const filteredJobs = filteredByStatus.filter((job) => {
     return Object.keys(job).some((key) =>
-      job[key]?.toString().toLowerCase() 
+      job[key]?.toString().toLowerCase()
         .includes(search.toString().toLowerCase())
     );
   });
@@ -38,12 +38,13 @@ export const JobColumn = ({
 
   return (
     <section>
+      {/* Column Header Tile */}
       <div className={`job-column status-${columnStatusClass}`}>
         <h2 className='heading-status'>{title}</h2>
         <img className="status-image" src={image} alt={alt} />
-        <p>Below are jobs that {statusName === "To Start" ? "need to be started:" : `are ${statusName}:`}</p>
+        <p>Below are jobs that {status === "To Start" ? "need to be started:" : `are ${status}:`}</p>
       </div>
-
+      {/* Droppable area for jobs */}
       <Droppable droppableId={droppableId}>
         {(provided) => (
           <ul
@@ -52,10 +53,10 @@ export const JobColumn = ({
             ref={provided.innerRef}
           >
             {filteredJobs.map((job, index) => (
+              // Draggable job item
               <Draggable key={job.id} draggableId={job.id.toString()} index={index}>
                 {(providedDraggable) => (
-                  <li // Changed div to li for semantic correctness in ul
-                    ref={providedDraggable.innerRef}
+                  <li ref={providedDraggable.innerRef}
                     {...providedDraggable.draggableProps}
                     {...providedDraggable.dragHandleProps}
                     className="draggable-item"
@@ -86,8 +87,8 @@ export const JobColumn = ({
                             <option key={cat} value={cat}>{cat}</option>
                           ))}
                         </select>
-                         {formError === 'Please select a category for the edited job.' && (
-                            <p className="error-message">{formError}</p>
+                        {formError === 'Please select a category for the edited job.' && (
+                          <p className="error-message">{formError}</p>
                         )}
 
                         <select
@@ -102,7 +103,7 @@ export const JobColumn = ({
                           ))}
                         </select>
                         {formError === 'Please select a status for the edited job.' && (
-                            <p className="error-message">{formError}</p>
+                          <p className="error-message">{formError}</p>
                         )}
 
                         <div className="edit-form-actions">
@@ -110,15 +111,12 @@ export const JobColumn = ({
                           <button type="button" onClick={cancelEdit} className="cancel-edit-button">Cancel</button>
                         </div>
                       </form>
-                    ) : (
-
-                      // Display JobStatus component when not editing
-                      <JobStatus
-                        job={job}
-                        updateJobStatus={updateJobStatus}
-                        onDeleteJob={onDeleteJob}
-                        onEditJob={onEditJob} 
-                      />
+                    ) : (<JobStatus
+                      job={job}
+                      updateJobStatus={updateJobStatus}
+                      onDeleteJob={onDeleteJob}
+                      onEditJob={onEditJob}
+                    />
                     )}
                   </li>
                 )}

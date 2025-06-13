@@ -8,33 +8,14 @@ import inProgressIcon from './images/in-progress-icon.png';
 import doneIcon from './images/done-icon.png';
 import './App.css';
 
+
+// Initialize job list objects from localStorage or default values
+const prevJobs = localStorage.getItem('jobs');
+
 function App() {
-  // Define consistent status options for the entire application
-  // const ALL_STATUSES = ['To Start', 'In Progress', 'Completed'];
-
-  // Initialize job list objects from localStorage or default values
-  const [jobs, setJobs] = useState(() => {
-    const savedJobs = localStorage.getItem('jobs');
-    if (savedJobs) {
-      try{
-        const parsedJobs = JSON.parse(savedJobs);
-        return parsedJobs.map(job => ({
-          ...job,
-          category: Array.isArray(job.category) ? job.category : (job.category ? [job.category] : [])
-        }));
-      } catch (e) {
-        // Handle parsing errors (e.g., corrupted localStorage data)
-        console.error("Error parsing saved jobs from localStorage:", e);
-        return []; // Return an empty array or default jobs if parsing fails
-      }}
-    // Default jobs if no saved jobs
-    return [
-      { id: 1, title: 'Parse Emails', status: 'To Start', category: ['Read Emails'] },
-      { id: 2, title: 'SAP Extraction', status: 'In Progress', category: ['Web Parsing'] },
-      { id: 3, title: 'Generate Report', status: 'Completed', category: ['Send Emails'] }
-    ];
-  });
-
+  const initialJobState = prevJobs ? JSON.parse(prevJobs) : [];
+  const [jobs, setJobs] = useState(initialJobState);
+  
   // Persist jobs to localStorage whenever 'jobs' state changes
   useEffect(() => {
     localStorage.setItem('jobs', JSON.stringify(jobs));
@@ -206,23 +187,6 @@ function App() {
     });
 
     setJobs(newJobs);
-
-/*     // Create a new array of jobs to avoid direct mutation
-    const newJobs = Array.from(jobs);
-
-    // Remove the dragged job from its original position
-    const oldIndex = newJobs.findIndex(job => job.id === draggedJob.id);
-    newJobs.splice(oldIndex, 1);
-
-    // Update the status of the dragged job based on the destination column
-    const updatedDraggedJob = { ...draggedJob, status: destination.droppableId }; // Use droppableId directly as new status
-
-    // Find the correct index to insert into the destination column
-    // const destinationColumnJobs = newJobs.filter(job => job.status === destination.droppableId);
-    // let insertIndex = destination.index;
-
-    const finalJobs = [...newJobs, updatedDraggedJob];
-    setJobs(finalJobs); */
   };
 
   return (
@@ -235,22 +199,19 @@ function App() {
 
         <Header
           addNewJob={addNewJob}
-          newJob={newJob}
-          setNewJob={setNewJob}
-          search={search}
-          setSearch={setSearch}
-          error={error}
-          setError={setError}
+          newJob={newJob} setNewJob={setNewJob}
+          search={search} setSearch={setSearch}
+          error={error}   setError={setError}
         />
         <main className="job-columns">
           {/* Render JobColumn for each status */}
-          <JobColumn
-            title="To Start" // Changed from "Need to Start" for consistency
+          <JobColumn 
             image={toDoIcon}
             alt="To-do icon"
+            title="To Start"
+            status="To Start"
             jobs={jobs}
             search={search}
-            statusName="To Start" 
             updateJobStatus={updateJobStatus}
             onDeleteJob={onDeleteJob}
             onEditJob={onEditJob} 
@@ -269,7 +230,7 @@ function App() {
             alt="In-progress icon"
             jobs={jobs}
             search={search}
-            statusName="In Progress"
+            status="In Progress"
             updateJobStatus={updateJobStatus}
             onDeleteJob={onDeleteJob}
             onEditJob={onEditJob}
@@ -288,7 +249,7 @@ function App() {
             alt="Done icon"
             jobs={jobs}
             search={search}
-            statusName="Completed"
+            status="Completed"
             updateJobStatus={updateJobStatus}
             onDeleteJob={onDeleteJob}
             onEditJob={onEditJob}

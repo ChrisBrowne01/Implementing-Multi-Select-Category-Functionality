@@ -7,7 +7,7 @@ import './FormButton.css'; // Make sure this CSS file exists for tag styling
 export const JobForm = ({ addNewJob, newJob, setNewJob, search, setSearch, error, setError }) => {
   const [successMessage, setSuccessMessage] = useState('');
 
-  const categories = ['Read Emails', 'Web Parsing', 'Send Emails', 'Data Entry', 'Reporting', 'Automated Testing']; 
+  const categories = ['Read Emails', 'Web Parsing', 'Send Emails']; 
   const statuses = ['To Start', 'In Progress', 'Completed']; 
 
   // handleInputChange remains largely the same for title and status
@@ -23,8 +23,12 @@ export const JobForm = ({ addNewJob, newJob, setNewJob, search, setSearch, error
     }
   };
 
-  // 1. Implement the handleCategoryToggle function
-  const handleCategoryToggle = (categoryValue) => {
+  const validateCategory = (cat) => {
+    return newJob.category.some(item => item === cat)
+  }
+
+  // Implement the selectCategory function
+  const selectCategory = (categoryValue) => {
     setNewJob(prevJob => {
       const currentCategories = prevJob.category || [];
 
@@ -34,8 +38,6 @@ export const JobForm = ({ addNewJob, newJob, setNewJob, search, setSearch, error
         setError(prevError => prevError === 'Please select at least one category.' ? '' : prevError); 
         return { ...prevJob, category: updatedCategories };
       } else {
-        // If not selected, add it
-        // Bonus Challenge 1: Implement max limit (example: max 3 categories)
         if (currentCategories.length >= 3) { 
           setError('Maximum of 3 categories can be selected.');
           return prevJob; 
@@ -129,13 +131,8 @@ export const JobForm = ({ addNewJob, newJob, setNewJob, search, setSearch, error
           <label>Select Categories:</label>
           <div className="bottom-line category-buttons">
             {categories.map(category => (
-              <FormButton
-                key={category}
-                value={category}
-                handleCategoryClick={handleCategoryToggle}
-                // 2. Add visual feedback for selected categories
-                isSelected={newJob.category.includes(category)}
-              />
+              <FormButton key={category} value={category.replace(/\s/gm, '')} selectCategory={selectCategory} selected={validateCategory(category.replace(/\s/gm, ''))} />
+              // <FormButton              value="ReadEmails" selectCategory={selectCategory} selected={validateCategory("ReadEmails")} />
             ))}
           </div>
           {error === 'Please select at least one category.' && (
