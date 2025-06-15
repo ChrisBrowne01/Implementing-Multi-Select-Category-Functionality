@@ -7,10 +7,7 @@ import './FormButton.css'
 // Added props for edit functionality
 export const JobStatus = ({ job, updateJobStatus, onDeleteJob, onEditJob }) => {
   // Determine status class based on the job's actual status. Replace space with '-'
-  const statusClass = job.status.toLowerCase().replace(/\s/g, '-');
-
-  // Define categories with their display names and internal values
-  const categories = ['Read Emails', 'Web Parsing', 'Send Emails']; 
+  const statusClass = job.status.toLowerCase().replace(/\s/g, '-'); 
 
   // Define category styles to apply the correct background color
   const categoryStyles = {
@@ -49,7 +46,7 @@ export const JobStatus = ({ job, updateJobStatus, onDeleteJob, onEditJob }) => {
                 type="button"
                 key={cat}
                 className="job-category-button tag"
-                style={categoryStyles[job.category] || categoryStyles.default}>
+                style={categoryStyles[cat] || categoryStyles.default}>
                 {cat}
               </button>
             ))}
