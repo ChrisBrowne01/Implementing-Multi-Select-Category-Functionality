@@ -3,6 +3,7 @@ import { Droppable, Draggable } from '@hello-pangea/dnd';
 import { JobStatus } from './JobStatus';
 import './JobColumn.css';
 import './AppForm.css'
+import { FormButton } from './FormButton';
 
 
 export const JobColumn = ({
@@ -24,6 +25,17 @@ export const JobColumn = ({
   formError
 }) => {
 
+  // Define categories (should match what's in JobForm.js for consistency)
+  const categories = ['Read Emails', 'Web Parsing', 'Send Emails'];
+
+  // Define category styles (should match what's in JobForm.js/JobStatus.js)
+  const categoryTagStyles = {
+    'Read Emails': { backgroundColor: 'orange', color: '#f4f7f6' },
+    'Web Parsing': { backgroundColor: 'blue', color: '#f4f7f6' },
+    'Send Emails': { backgroundColor: 'yellow', color: '#343a40' },
+    'default': { backgroundColor: 'var(--tag-bg-light)' }
+  };
+
   // Filter jobs: first filter by status, then by search query
   const filteredByStatus = jobs.filter(job => job.status === status);
   const filteredJobs = filteredByStatus.filter((job) => {
@@ -35,6 +47,31 @@ export const JobColumn = ({
 
   // Determine the status class for the column based on the title
   const columnStatusClass = title.toLowerCase().replace(/\s/g, '-');
+
+  // New handler for category selection in the edit form
+  const handleCategoryEditSelection = (categoryValue) => {
+    // This is similar to selectCategory in JobForm, but operates on editForm.category
+    const currentCategories = editForm.category || [];
+
+    if (currentCategories.includes(categoryValue)) {
+      // If selected, remove it
+      const updatedCategories = currentCategories.filter(cat => cat !== categoryValue);
+      handleEditFormChange({ target: { name: 'category', value: updatedCategories } });
+    } else {
+      // If not selected, add it
+      if (currentCategories.length >= 3) {
+        formError(prevError => (prevError === 'Job title is required.' || prevError === 'Job title must be at least 3 characters long.') ? '' : prevError);
+        return;
+      }
+      const updatedCategories = [...currentCategories, categoryValue];
+      handleEditFormChange({ target: { name: 'category', value: updatedCategories } });
+    }
+  };
+
+  // Helper to check if a category is selected in the edit form
+  const isCategorySelectedInEditForm = (cat) => {
+    return Array.isArray(editForm.category) && editForm.category.includes(cat);
+  };
 
   return (
     <section>
@@ -76,19 +113,27 @@ export const JobColumn = ({
                           <p className="error-message">{formError}</p>
                         )}
 
-                        {/* Category for edit form - now multi-select */}
-                        <select
-                          name="category"
-                          value={editForm.category} 
-                          onChange={handleEditFormChange}
-                          className={`edit-select ${formError === 'Please select a category for the edited job.' ? 'input-error' : ''}`}
-                        >
-                          <option value="">Select Category</option>
-                          {['Read Emails', 'Web Parsing', 'Send Emails'].map(cat => (
-                            <option key={cat} value={cat}>{cat}</option>
-                          ))}
-                        </select>
-                        {formError === 'Please select a category for the edited job.' && (
+                        {/* Category for edit form - now multi-select buttons */}
+                        <div className="edit-category-buttons-group">
+                          <label>Edit Categories:</label>
+                          <div className="category-buttons">
+                            {categories.map(category => {
+                              const isSelected = isCategorySelectedInEditForm(category);
+                              const buttonStyle = isSelected ? categoryTagStyles[category] : categoryTagStyles.default;
+
+                              return (
+                                <FormButton
+                                  key={category}
+                                  value={category}
+                                  onClick={() => handleCategoryEditSelection(category)}
+                                  className={`tag ${isSelected ? 'selected-tag' : ''}`}
+                                  style={buttonStyle}
+                                />
+                              );
+                            })}
+                          </div>
+                        </div>
+                        {formError === 'Please select at least one category for the edited job.' && (
                           <p className="error-message">{formError}</p>
                         )}
 
