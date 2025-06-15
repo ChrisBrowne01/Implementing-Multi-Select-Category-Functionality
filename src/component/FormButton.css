@@ -4,6 +4,7 @@
   color: var(--tag-text-light); 
   border: 1px solid var(--tag-border-light); 
   padding: var(--spacing-sm) var(--spacing-lg); 
+  margin: 2px;
   border-radius: var(--border-radius-lg); 
   cursor: pointer;
   font-size: var(--font-size-sm); 

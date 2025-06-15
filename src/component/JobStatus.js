@@ -36,33 +36,32 @@ export const JobStatus = ({ job, updateJobStatus, onDeleteJob, onEditJob }) => {
             </button>
           </div>
         </div>
+      </div>
 
-        <div className="card-footer">
-
-          {/* Display the multi-selected category centered */}
-          <div className="card-footer-col-category">
-            {Array.isArray(job.category) && job.category.map((cat) => (
-              <button
-                type="button"
-                key={cat}
-                className="job-category-button tag"
-                style={categoryStyles[cat] || categoryStyles.default}>
-                {cat}
-              </button>
-            ))}
+      <div className="card-footer">
+        {/* Display the multi-selected category centered */}
+        <div className="card-footer-col-category">
+          {Array.isArray(job.category) && job.category.map((cat) => (
+            <button
+              type="button"
+              key={cat}
+              className="job-category-button tag"
+              style={categoryStyles[cat] || categoryStyles.default}>
+              {cat}
+            </button>
+          ))}
+        </div>
+        
+        {/* Display the edit and delete actions aligned right */}
+        <div className="card-footer-col-actions">
+          <div className="edit-button" onClick={() => onEditJob(job.id)}>
+            <img src={editIcon} className='editImg' alt="Edit" />
           </div>
-          
-          {/* Display the edit and delete actions aligned right */}
-          <div className="card-footer-col-actions">
-            <div className="edit-button" onClick={() => onEditJob(job.id)}>
-              <img src={editIcon} className='editImg' alt="Edit" />
-            </div>
-            <div className='jobDelete' onClick={() => onDeleteJob(job.id)}>
-              <img src={deleteIcon} className='deletingImg' alt="Delete" />
-            </div>
+          <div className='jobDelete' onClick={() => onDeleteJob(job.id)}>
+            <img src={deleteIcon} className='deletingImg' alt="Delete" />
           </div>
+        </div>
 
-        </div>        
       </div>
     </div>
   );
