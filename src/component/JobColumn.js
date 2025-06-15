@@ -42,7 +42,7 @@ export const JobColumn = ({
       <div className={`job-column status-${columnStatusClass}`}>
         <h2 className='heading-status'>{title}</h2>
         <img className="status-image" src={image} alt={alt} />
-        <p>Below are jobs that {status === "To Start" ? "need to be started:" : `are ${status}:`}</p>
+        <p>Below are jobs {status === "To Start" ? "which need to Start:" : `that are ${status}:`}</p>
       </div>
       {/* Droppable area for jobs */}
       <Droppable droppableId={droppableId}>
@@ -76,9 +76,10 @@ export const JobColumn = ({
                           <p className="error-message">{formError}</p>
                         )}
 
+                        {/* Category for edit form - now multi-select */}
                         <select
                           name="category"
-                          value={editForm.category}
+                          value={editForm.category} 
                           onChange={handleEditFormChange}
                           className={`edit-select ${formError === 'Please select a category for the edited job.' ? 'input-error' : ''}`}
                         >
@@ -111,7 +112,8 @@ export const JobColumn = ({
                           <button type="button" onClick={cancelEdit} className="cancel-edit-button">Cancel</button>
                         </div>
                       </form>
-                    ) : (<JobStatus
+                    ) : (
+                    <JobStatus
                       job={job}
                       updateJobStatus={updateJobStatus}
                       onDeleteJob={onDeleteJob}

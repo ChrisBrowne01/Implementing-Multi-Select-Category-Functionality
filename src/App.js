@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { DragDropContext } from '@hello-pangea/dnd';
 import { Header } from "./component/Header";
 import { Footer } from './component/Footer';
+import { JobForm } from "./component/JobForm";
 import { JobColumn } from "./component/JobColumn";
 import toDoIcon from './images/to-do-icon.jpg';
 import inProgressIcon from './images/in-progress-icon.png';
@@ -24,16 +25,21 @@ function App() {
   // State for search filter
   const [search, setSearch] = useState("");
 
-  // State for new job form inputs (managed in App.js)
+  // State for new job form inputs
   const [newJob, setNewJob] = useState({
     title: '',
-    category: [],
+    category: [], // Set category to [] for multi-select
     status: 'To Start'
   });
 
   // States for edit functionality
   const [editingJob, setEditingJob] = useState(null); 
-  const [editForm, setEditForm] = useState({ id: '', title: '', status: '', category: [] });
+  const [editForm, setEditForm] = useState({ 
+    id: '', 
+    title: '', 
+    status: '', 
+    category: [] // Set category to [] for multi-select
+  });
 
   // State for form-wide error messages (passed to JobForm)
   const [error, setError] = useState("");
@@ -44,7 +50,7 @@ function App() {
     return savedMode === 'true'; 
   });
 
-  // Effect to apply/remove the 'dark-mode' class on the body
+  // Effect to apply/remove dark mode class to body and save preference in localStorage
   useEffect(() => {
     document.body.classList.toggle('dark-mode', darkMode);
     localStorage.setItem('darkMode', darkMode);
@@ -55,7 +61,7 @@ function App() {
     setDarkMode(prevMode => !prevMode);
   };
 
-  // Delete job based on ID
+  // OnClick handler to delete job based on ID
   const onDeleteJob = (id) => { setJobs(jobs.filter((job) => job.id !== id));
     // If the deleted job was being edited, clear the editing state
     if (editingJob === id) {
@@ -64,7 +70,7 @@ function App() {
     }
   };
 
-  // Update job status based on condition (JobStatus component's "Start/Complete" button)
+  // OnClick handler to update job staus based on condition and job ID (JobStatus component's "Start/In Progress/Complete" button)
   const updateJobStatus = (id) => {
     setJobs(
       jobs.map(job => 
@@ -75,14 +81,16 @@ function App() {
     );
   };
 
-  // Add new job functionality (called by JobForm)
+  // Add new job listing (called by JobForm)
   const addNewJob = (jobDetails) => { 
     // Basic validation is now handled in JobForm, but a final check here is good
     if (!jobDetails.title.trim() || jobDetails.title.trim().length < 3 || !jobDetails.category || !jobDetails.status || jobDetails.status === 'Select status...') {
         setError("Please fill all fields correctly.");
         return;
     }
-    if (jobDetails.category.length === 0) { // Check if the array is empty
+
+    // Since category is a multi-select array now, check if the array is empty
+    if (jobDetails.category.length === 0) {
         setError("Please select at least one job category.");
         return;
     }
@@ -99,11 +107,11 @@ function App() {
       id: newId,
       title: jobDetails.title.trim(),
       status: jobDetails.status.trim(),
-      category: jobDetails.category
+      category: jobDetails.category // category is a array
     };
 
     setJobs(prevJobs => [...prevJobs, newJobListing]);
-    setNewJob({ title: '', category: [], status: 'To Start' });
+    setNewJob({ title: '', category: [], status: 'To Start' }); // Reset to [] for multi-select category 
     setError("");
 
     console.log("Submitting Job:", newJobListing);
@@ -111,12 +119,13 @@ function App() {
   };
 
   // Edit Functions
-  // Start editing a job
+  // OnClick handler to start editing a job
   const onEditJob = (jobId) => {
     const jobToEdit = jobs.find(job => job.id === jobId);
     if (jobToEdit) {
       setEditingJob(jobId);
-      setEditForm({ ...jobToEdit, category: jobToEdit.category || [] });
+      // Ensure category is not null for editForm if it's a multi-select
+      setEditForm({ ...jobToEdit, category: jobToEdit.category || [] }); // Ensure multi value
       setError(""); 
     }
   };
@@ -153,13 +162,13 @@ function App() {
       job.id === editingJob ? { ...editForm } : job
     ));
     setEditingJob(null);
-    setEditForm({ id: '', title: '', status: '', category: [] }); 
+    setEditForm({ id: '', title: '', status: '', category: [] }); // Reset to [] array 
     setError(""); 
   };
 
   const cancelEdit = () => {
     setEditingJob(null);
-    setEditForm({ id: '', title: '', status: '', category: [] });
+    setEditForm({ id: '', title: '', status: '', category: [] }); // Reset to [] array
     setError("");
   };
 
@@ -197,11 +206,13 @@ function App() {
           {darkMode ? 'Light Mode ☀️' : 'Dark Mode 🌙'}
         </button>
 
-        <Header
+        <Header />
+        {/* Render JobForm directly in App.js and pass relevant props */}
+        <JobForm
           addNewJob={addNewJob}
           newJob={newJob} setNewJob={setNewJob}
           search={search} setSearch={setSearch}
-          error={error}   setError={setError}
+          error={error} setError={setError}
         />
         <main className="job-columns">
           {/* Render JobColumn for each status */}

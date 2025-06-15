@@ -2,13 +2,23 @@ import React, { useState } from 'react';
 import { FormButton } from './FormButton';
 import { FilterForm } from './FilterForm';
 import './AppForm.css';
-import './FormButton.css'; // Make sure this CSS file exists for tag styling
+import './FormButton.css'; 
 
 export const JobForm = ({ addNewJob, newJob, setNewJob, search, setSearch, error, setError }) => {
   const [successMessage, setSuccessMessage] = useState('');
 
+  // Define categories with their display names and internal values
   const categories = ['Read Emails', 'Web Parsing', 'Send Emails']; 
+
   const statuses = ['To Start', 'In Progress', 'Completed']; 
+
+  // Define category styles to apply the correct background color
+  const categoryTagStyles = {
+    'Read Emails': { backgroundColor: 'orange', color: '#f4f7f6' }, 
+    'Web Parsing': { backgroundColor: 'blue', color: '#f4f7f6' },
+    'Send Emails': { backgroundColor: 'yellow', color: '#343a40' },
+    'default': { backgroundColor: 'var(--tag-bg-light)' }
+  };
 
   // handleInputChange remains largely the same for title and status
   const handleInputChange = (e) => {
@@ -27,7 +37,7 @@ export const JobForm = ({ addNewJob, newJob, setNewJob, search, setSearch, error
     return newJob.category.some(item => item === cat)
   }
 
-  // Implement the selectCategory function
+  // Handler to recieve multiple selected categories
   const selectCategory = (categoryValue) => {
     setNewJob(prevJob => {
       const currentCategories = prevJob.category || [];
@@ -49,7 +59,7 @@ export const JobForm = ({ addNewJob, newJob, setNewJob, search, setSearch, error
     });
   };
 
-  // 6. Add a "Clear Categories" button
+  // Add a "Clear Categories" button
   const handleClearCategories = () => {
     setNewJob(prevJob => ({ ...prevJob, category: [] }));
     setError(""); 
@@ -63,7 +73,6 @@ export const JobForm = ({ addNewJob, newJob, setNewJob, search, setSearch, error
       status: 'To Start'
     });
     setError("");
-    setSuccessMessage('');
   };
 
   // Handle on Submit function
@@ -79,7 +88,7 @@ export const JobForm = ({ addNewJob, newJob, setNewJob, search, setSearch, error
       setError('Job title must be at least 3 characters long.');
       return;
     }
-    // 5. Implement form validation: Ensure at least one category is selected
+    // Check at least one category is selected
     if (newJob.category.length === 0) {
       setError('Please select at least one category.');
       return;
@@ -89,7 +98,7 @@ export const JobForm = ({ addNewJob, newJob, setNewJob, search, setSearch, error
       return;
     }
 
-    console.log('Job Details Submitted:', newJob); // 4. Modify handleSubmit to include selected categories
+    console.log('Job Details Submitted:', newJob); 
 
     addNewJob(newJob); 
 
@@ -102,12 +111,12 @@ export const JobForm = ({ addNewJob, newJob, setNewJob, search, setSearch, error
   };
 
   // Determine if the submit button should be disabled
-  const isSubmitDisabled =
+  /* const isSubmitDisabled =
     !newJob.title.trim() ||
     newJob.title.trim().length < 3 ||
     newJob.category.length === 0 || 
     !newJob.status ||
-    newJob.status === '';
+    newJob.status === ''; */
 
   return (
     <div className="form-header">
@@ -130,10 +139,20 @@ export const JobForm = ({ addNewJob, newJob, setNewJob, search, setSearch, error
         <div className="form-details">
           <label>Select Categories:</label>
           <div className="bottom-line category-buttons">
-            {categories.map(category => (
-              <FormButton key={category} value={category.replace(/\s/gm, '')} selectCategory={selectCategory} selected={validateCategory(category.replace(/\s/gm, ''))} />
-              // <FormButton              value="ReadEmails" selectCategory={selectCategory} selected={validateCategory("ReadEmails")} />
-            ))}
+            {categories.map(category => {
+                const isSelected = validateCategory(category);
+                const buttonStyle = isSelected ? categoryTagStyles[category] : categoryTagStyles.default;
+
+                return (
+                    <FormButton
+                        key={category}
+                        value={category} // Display the label
+                        onClick={() => selectCategory(category)} // Pass the internal value
+                        className={`tag ${isSelected ? 'selected-tag' : ''}`}
+                        style={buttonStyle} // Apply dynamic inline style
+                    />
+                );
+            })}
           </div>
           {error === 'Please select at least one category.' && (
             <p className="error-message">{error}</p>
@@ -142,7 +161,7 @@ export const JobForm = ({ addNewJob, newJob, setNewJob, search, setSearch, error
             <p className="error-message">{error}</p>
           )}
 
-          {/* 3. Display the list of selected categories */}
+          {/* Display the list of selected categories */}
           {newJob.category.length > 0 && (
             <div className="selected-categories-display">
               <strong>Selected:</strong> {newJob.category.join(', ')}
@@ -178,13 +197,13 @@ export const JobForm = ({ addNewJob, newJob, setNewJob, search, setSearch, error
           )}
         </div>
 
-        <button type="submit" className="submit-data" disabled={isSubmitDisabled}>
+        <button type="submit" className="submit-data" /* disabled={isSubmitDisabled} */>
           Add Jobs
         </button>
 
-        {successMessage && (<p className="success-message">{successMessage}</p>)}
-
       </form>
+      
+      {successMessage && (<div className="valid-tooltip">{successMessage}</div>)}
 
       <FilterForm
         search={search}

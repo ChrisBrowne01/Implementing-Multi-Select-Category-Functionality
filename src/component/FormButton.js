@@ -1,21 +1,19 @@
+// ./src/component/FormButton.js
 import React from 'react';
-import './FormButton.css'; 
-
-export const FormButton = ({ value, selectCategory, selected }) => {
-  const addCSStoButton = {
-    ReadEmails: {backgroundColor:"orangered"},
-    WebParsing: {backgroundColor:"blue"},
-    SendEmails: {backgroundColor:"purple"},
-    default: {backgroundColor:"white"}
-  }
-
+import './FormButton.css';
+ 
+// Removed isSelected and handleCategoryClick specific props
+// Now takes a generic onClick, style, and className
+export const FormButton = ({ value, onClick, style, className }) => {
   return (  
-    <button type="button" style={ selected ? addCSStoButton[value]:value.default }
+    <button 
+      type="button"
+      onClick={onClick}
       value={value} 
-      name="category" 
-      onClick={() => selectCategory(value)}
-      className={`tag`}
-    >{value}
+      className={className} 
+      style={style} 
+    >
+      {value}
     </button>
   );
 };
